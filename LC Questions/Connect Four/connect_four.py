@@ -77,8 +77,7 @@ class ConnectFour:
       
     return False
     
-  def _diagonal_scoring_opportunity(self, color: str, col: int) -> bool:
-    """
+   """
     We can check for scoring opportunity on the dropped row within these 8 conditions if width exists:
     x = new dropped spot, . = previos macthing colors
     .           x     x           .     .           .     .           .
@@ -87,10 +86,12 @@ class ConnectFour:
        x     .           .     x           .     .           .     .
     However these 8 checks double the iertaion we need to do so we can have a single BOTTOM-UP iteration diagonally and anti-diagonally 
     to check for the case where 3 colors and the dropped to row exist consecutively
-    """
+  """
+
+  def _diagonal_scoring_opportunity(self, color: str, col: int) -> bool:
     dropped_to_row = self.first_available_row[col]
     
-    # 1: Diagnal Iter (start from the lowest left point within the 3 range and iterate ↑→)
+    # Diagnal Iter (start from the lowest left point within the 3 range and iterate ↑→)
     lowest_row_col_index = [ dropped_to_row, col ]
     while lowest_row_col_index[0] < self.ROW and lowest_row_col_index[1] > 0: # They are interdependant so drag together until one runs out
       lowest_row_col_index[0] += 1
@@ -118,10 +119,17 @@ class ConnectFour:
     if color_count == 3 and have_used_chip: # Check for last iteration
         print("DEBUG: Gained in Diagnal Check 2")
         return True
+
+    return False
       
-    # 2: Anti-Diaginal Iter (start from the lowest right point within the 3 range and iterate ←↑)
+
+
+  def _anti_diagonal_scoring_opportunity(self, color: str, col: int) -> bool:
+    dropped_to_row = self.first_available_row[col]
+    
+    # Anti-Diagonal Iter (start from the lowest right point within the 3 range and iterate ←↑)
     lowest_row_col_index = [ dropped_to_row, col ]
-    while lowest_row_col_index[0] < self.ROW and lowest_row_col_index[1] < self.COL: # They are interdependant so drag together until one runs out
+    while lowest_row_col_index[0] < self.ROW and lowest_row_col_index[1] < self.COL: # They are interdependent so drag them together until one runs out
       lowest_row_col_index[0] += 1
       lowest_row_col_index[1] += 1
       
@@ -146,7 +154,7 @@ class ConnectFour:
       
     if color_count == 3 and have_used_chip: # Check for last iteration
         return True
-        print("DEBUG: Gained in Anti-Diagnal Check 2")
+        print("DEBUG: Gained in Anti-Diagonal Check 2")
 
     return False
     
@@ -158,7 +166,8 @@ class ConnectFour:
       
     total_score = sum([ self._vertical_scoring_opportunity(color,col),
                         self._horizontal_scoring_opportunity(color,col),
-                        self._diagonal_scoring_opportunity(color,col)  ])
+                        self._diagonal_scoring_opportunity(color,col),
+                        self._anti_diagonal_scoring_opportunity(color,col) ])
     
     if total_score:
       self.score[color] += total_score
@@ -167,7 +176,7 @@ class ConnectFour:
     # Report Score
     print(f"Current Score: Yellow has {self.score['Y']} points and Red has {self.score['R']} points")
     
-    # Already Calcualted and Reported the Score without modifying board so now update board to keep the play going
+    # Already Calculated and Reported the Score without modifying the board so now update the board to keep the play going
     dropped_to_row = self.first_available_row[col]
     self.board[dropped_to_row][col] = color
     
@@ -183,13 +192,13 @@ class ConnectFour:
     """
     Shortcomings:
     1. I acknowledge this game will go on and will only end when all slots are filled instead of detecting 
-    the presence or lack of scoring oppportunity to end the game early, which could be implemented by an 
-    additional boolea function _is_there_potential_scoring_slot() to end the game early
+    the presence or lack of scoring opportunity to end the game early, which could be implemented by an 
+    additional boolean function _is_there_potential_scoring_slot() to end the game early
     
-    2. In a case where we have a connect 4 score obatined and one more chip of the same color is added to the
-    already made connectuion in an adjacent direction another point is gained. This is comes from the fact that
-    I am not well aware of the point limitations of the continuning game. However this can easiy be solved by adding
-    a set that contains tuples of (row,col) for connect four points already gaied if the rule states otherwise.
+    2. In a case where we have a connect 4 score obtained and one more chip of the same color is added to the
+    already made connection in an adjacent direction another point is gained. This comes from the fact that
+    I am not well aware of the point limitations of the continuing version of the game. However, this can easily be solved by adding
+    a set that contains tuples of (row,col) for connect four points already gained if the rule states otherwise.
     """
     
     if len(self.first_available_row) > 0:
