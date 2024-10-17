@@ -191,7 +191,7 @@ class ConnectFour:
       
     """
     Shortcomings:
-    1. I acknowledge this game will go on and will only end when all slots are filled instead of detecting 
+    1. This game will go on and will only end when all slots are filled instead of detecting 
     the presence or lack of scoring opportunity to end the game early, which could be implemented by an 
     additional boolean function _is_there_potential_scoring_slot() to end the game early
     
