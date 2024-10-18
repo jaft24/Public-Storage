@@ -37,13 +37,19 @@ class ConnectFour:
     return available_rows
     
   def _vertical_scoring_opportunity(self, color: str, col: int) -> bool: 
-    # On the Dropped Row check if atleast the previous three rows are the same color with BOTTOM-UP iteration
+    # On the Dropped Row check if at least the previous three rows are the same color with BOTTOM-UP iteration
+
     dropped_to_row = self.first_available_row[col]
-    vertically_aligned_colors_count = sum(1 for row in range(dropped_to_row - 1, self.ROW + 1) if self.board[row][col] == color)
-    if vertically_aligned_colors_count >= 3:
-      print("DEBUG: Gained in Vertical Check")
-      return True
-      
+    if dropped_to_row + 3 <= self.ROW:
+        # Check the next three rows downwards for the same color
+        for row in range(dropped_to_row + 1, dropped_to_row + 4):
+            if self.board[row][col] != color:
+                return False
+        # If all three below match the color, it's a scoring opportunity
+        print("DEBUG: Gained in Vertical Check")
+        return True
+    
+    # Not enough rows below to form a vertical scoring opportunity
     return False
       
   def _horizontal_scoring_opportunity(self, color: str, col: int) -> bool:
@@ -391,8 +397,6 @@ Current Score: Yellow has 3 points and Red has 2 points
  ['.', 'R', 'Y', 'Y', 'R', '.', '.'],
  ['R', 'Y', 'Y', 'Y', 'R', '.', 'R'],
  ['Y', 'Y', 'Y', 'Y', 'R', 'Y', 'Y']]
-
-THANK YOU
 """
       
 
